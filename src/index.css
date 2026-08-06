@@ -145,7 +145,8 @@ input, button {
   cursor: pointer;
 }
 
-.menu-card input[type="radio"] {
+.menu-card input[type="radio"],
+.menu-card input[type="checkbox"] {
   width: 20px;
   height: 20px;
   accent-color: #ff8a3d;
@@ -153,7 +154,8 @@ input, button {
   cursor: pointer;
 }
 
-.menu-card input[type="radio"]:disabled {
+.menu-card input[type="radio"]:disabled,
+.menu-card input[type="checkbox"]:disabled {
   cursor: not-allowed;
 }
 

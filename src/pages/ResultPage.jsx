@@ -2,6 +2,13 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import * as voteApi from "../api/voteApi";
 
+const isMyVote = (item, result) => {
+  if (item.menuId) return result.myVoteMenuIds?.includes(item.menuId);
+  if (item.specialOption === "ANY_MENU") return result.myAnyMenu;
+  if (item.specialOption === "NO_PREFERENCE") return result.myNoPreference;
+  return false;
+};
+
 export default function ResultPage() {
   const { code } = useParams();
   const [result, setResult] = useState(null);
@@ -17,6 +24,7 @@ export default function ResultPage() {
   }, [code]);
 
   const maxCount = result ? Math.max(1, ...result.items.map((i) => i.voteCount)) : 1;
+  const hasMenus = result ? result.items.some((i) => i.menuId) : false;
 
   return (
     <div className="page">
@@ -36,38 +44,37 @@ export default function ResultPage() {
             {result.className} · {result.voteDate} · 총 {result.totalVotes}표
           </p>
 
-          {result.items.length === 0 && <p className="empty">오늘은 등록된 메뉴가 없습니다.</p>}
+          {!hasMenus && <p className="empty">오늘은 등록된 메뉴가 없습니다.</p>}
 
           <ul className="result-list">
-            {result.items.map((item) => (
-              <li
-                key={item.menuId}
-                className={`result-item${item.menuId === result.myVoteMenuId ? " voted" : ""}`}
-              >
-                <div className="result-row">
-                  {item.imageUrl && (
-                    <img className="menu-thumb" src={item.imageUrl} alt={item.menuName} />
-                  )}
-                  <div className="result-body">
-                    <div className="result-label">
-                      <span>
-                        {item.menuName}
-                        {item.menuId === result.myVoteMenuId && (
-                          <span className="badge voted-badge">내 선택</span>
-                        )}
-                      </span>
-                      <span>{item.voteCount}표</span>
-                    </div>
-                    <div className="result-bar-track">
-                      <div
-                        className="result-bar-fill"
-                        style={{ width: `${(item.voteCount / maxCount) * 100}%` }}
-                      />
+            {result.items.map((item) => {
+              const key = item.menuId ?? item.specialOption;
+              const mine = isMyVote(item, result);
+              return (
+                <li key={key} className={`result-item${mine ? " voted" : ""}`}>
+                  <div className="result-row">
+                    {item.imageUrl && (
+                      <img className="menu-thumb" src={item.imageUrl} alt={item.menuName} />
+                    )}
+                    <div className="result-body">
+                      <div className="result-label">
+                        <span>
+                          {item.menuName}
+                          {mine && <span className="badge voted-badge">내 선택</span>}
+                        </span>
+                        <span>{item.voteCount}표</span>
+                      </div>
+                      <div className="result-bar-track">
+                        <div
+                          className="result-bar-fill"
+                          style={{ width: `${(item.voteCount / maxCount) * 100}%` }}
+                        />
+                      </div>
                     </div>
                   </div>
-                </div>
-              </li>
-            ))}
+                </li>
+              );
+            })}
           </ul>
         </>
       )}

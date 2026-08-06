@@ -13,12 +13,19 @@ export default function BoardPage() {
   const { code } = useParams();
   const navigate = useNavigate();
   const [menus, setMenus] = useState([]);
-  const [myVoteMenuId, setMyVoteMenuId] = useState(null);
-  const [selectedMenuId, setSelectedMenuId] = useState(null);
+  const [myVoteMenuIds, setMyVoteMenuIds] = useState([]);
+  const [myAnyMenu, setMyAnyMenu] = useState(false);
+  const [myNoPreference, setMyNoPreference] = useState(false);
+  const [selectedMenuIds, setSelectedMenuIds] = useState([]);
+  const [selectedAnyMenu, setSelectedAnyMenu] = useState(false);
+  const [selectedNoPreference, setSelectedNoPreference] = useState(false);
   const [loading, setLoading] = useState(true);
   const [voting, setVoting] = useState(false);
   const [error, setError] = useState("");
   const [reselecting, setReselecting] = useState(false);
+
+  const hasVoted = myVoteMenuIds.length > 0 || myAnyMenu || myNoPreference;
+  const hasSelection = selectedMenuIds.length > 0 || selectedAnyMenu || selectedNoPreference;
 
   const load = async () => {
     setLoading(true);
@@ -29,7 +36,10 @@ export default function BoardPage() {
         voteApi.getResult(code).catch(() => null),
       ]);
       setMenus(menuRes.data.data);
-      setMyVoteMenuId(resultRes?.data?.data?.myVoteMenuId ?? null);
+      const result = resultRes?.data?.data;
+      setMyVoteMenuIds(result?.myVoteMenuIds ?? []);
+      setMyAnyMenu(result?.myAnyMenu ?? false);
+      setMyNoPreference(result?.myNoPreference ?? false);
     } catch (err) {
       if (err.response?.status === 404) {
         setError("존재하지 않는 코드입니다.");
@@ -46,13 +56,25 @@ export default function BoardPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [code]);
 
+  const toggleMenu = (menuId) => {
+    setSelectedMenuIds((prev) =>
+      prev.includes(menuId) ? prev.filter((id) => id !== menuId) : [...prev, menuId]
+    );
+  };
+
   const handleVote = async () => {
-    if (!selectedMenuId) return;
+    if (!hasSelection) return;
     setVoting(true);
     setError("");
     try {
-      await voteApi.vote(code, selectedMenuId);
-      setMyVoteMenuId(selectedMenuId);
+      await voteApi.vote(code, {
+        menuIds: selectedMenuIds,
+        anyMenu: selectedAnyMenu,
+        noPreference: selectedNoPreference,
+      });
+      setMyVoteMenuIds(selectedMenuIds);
+      setMyAnyMenu(selectedAnyMenu);
+      setMyNoPreference(selectedNoPreference);
       setReselecting(false);
     } catch (err) {
       setError(err.response?.data?.msg || "투표에 실패했습니다.");
@@ -62,10 +84,14 @@ export default function BoardPage() {
   };
 
   const handleReselect = () => {
-    setSelectedMenuId(myVoteMenuId);
+    setSelectedMenuIds(myVoteMenuIds);
+    setSelectedAnyMenu(myAnyMenu);
+    setSelectedNoPreference(myNoPreference);
     setReselecting(true);
     setError("");
   };
+
+  const locked = hasVoted && !reselecting;
 
   return (
     <div className="page">
@@ -88,28 +114,29 @@ export default function BoardPage() {
 
       {!loading && !error && menus.length > 0 && (
         <>
-          {myVoteMenuId && !reselecting && (
-            <p className="notice">이미 오늘 투표를 완료했습니다. 아래에서 결과를 확인하세요.</p>
+          {locked && (
+            <p className="notice">
+              이미 오늘 투표를 완료했습니다. 여러 메뉴를 함께 선택했다면 모두 표시됩니다.
+            </p>
           )}
 
           <ul className="menu-list">
             {menus.map((menu) => {
-              const isVoted = !reselecting && myVoteMenuId === menu.menuId;
-              const isSelectable = (!myVoteMenuId || reselecting) && menu.status === "OPEN";
+              const isVoted = locked && myVoteMenuIds.includes(menu.menuId);
+              const isSelectable = !locked && menu.status === "OPEN";
               return (
                 <li
                   key={menu.menuId}
-                  className={`menu-card${selectedMenuId === menu.menuId ? " selected" : ""}${
+                  className={`menu-card${selectedMenuIds.includes(menu.menuId) ? " selected" : ""}${
                     isVoted ? " voted" : ""
                   }`}
                 >
                   <label>
                     <input
-                      type="radio"
-                      name="menu"
+                      type="checkbox"
                       disabled={!isSelectable}
-                      checked={selectedMenuId === menu.menuId}
-                      onChange={() => setSelectedMenuId(menu.menuId)}
+                      checked={selectedMenuIds.includes(menu.menuId)}
+                      onChange={() => toggleMenu(menu.menuId)}
                     />
                     {menu.imageUrl && (
                       <img className="menu-thumb" src={menu.imageUrl} alt={menu.menuName} />
@@ -127,20 +154,61 @@ export default function BoardPage() {
                 </li>
               );
             })}
+
+            <li
+              className={`menu-card${selectedAnyMenu ? " selected" : ""}${
+                locked && myAnyMenu ? " voted" : ""
+              }`}
+            >
+              <label>
+                <input
+                  type="checkbox"
+                  disabled={locked}
+                  checked={selectedAnyMenu}
+                  onChange={(e) => setSelectedAnyMenu(e.target.checked)}
+                />
+                <div>
+                  <div className="menu-name">
+                    무슨 메뉴든 좋다
+                    {locked && myAnyMenu && <span className="badge voted-badge">내 선택</span>}
+                  </div>
+                </div>
+              </label>
+            </li>
+            <li
+              className={`menu-card${selectedNoPreference ? " selected" : ""}${
+                locked && myNoPreference ? " voted" : ""
+              }`}
+            >
+              <label>
+                <input
+                  type="checkbox"
+                  disabled={locked}
+                  checked={selectedNoPreference}
+                  onChange={(e) => setSelectedNoPreference(e.target.checked)}
+                />
+                <div>
+                  <div className="menu-name">
+                    원하는 메뉴가 없다
+                    {locked && myNoPreference && <span className="badge voted-badge">내 선택</span>}
+                  </div>
+                </div>
+              </label>
+            </li>
           </ul>
 
-          {(!myVoteMenuId || reselecting) && (
+          {!locked && (
             <button
               type="button"
               className="vote-button"
-              disabled={!selectedMenuId || voting}
+              disabled={!hasSelection || voting}
               onClick={handleVote}
             >
               {voting ? "투표하는 중..." : "투표하기"}
             </button>
           )}
 
-          {myVoteMenuId && !reselecting && (
+          {locked && (
             <button type="button" className="secondary-button" onClick={handleReselect}>
               다시 선택하기
             </button>
