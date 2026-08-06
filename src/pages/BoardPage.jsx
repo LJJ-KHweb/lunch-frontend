@@ -185,6 +185,9 @@ export default function BoardPage() {
                   checked={selectedAnyMenu}
                   onChange={(e) => handleAnyMenuChange(e.target.checked)}
                 />
+                <div className="menu-thumb-placeholder" aria-hidden="true">
+                  🍽️
+                </div>
                 <div>
                   <div className="menu-name">
                     무슨 메뉴든 좋다
@@ -205,6 +208,9 @@ export default function BoardPage() {
                   checked={selectedNoPreference}
                   onChange={(e) => handleNoPreferenceChange(e.target.checked)}
                 />
+                <div className="menu-thumb-placeholder" aria-hidden="true">
+                  🙅
+                </div>
                 <div>
                   <div className="menu-name">
                     원하는 메뉴가 없다

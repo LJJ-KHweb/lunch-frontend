@@ -2,6 +2,11 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import * as voteApi from "../api/voteApi";
 
+const SPECIAL_ICON = {
+  ANY_MENU: "🍽️",
+  NO_PREFERENCE: "🙅",
+};
+
 const isMyVote = (item, result) => {
   if (item.menuId) return result.myVoteMenuIds?.includes(item.menuId);
   if (item.specialOption === "ANY_MENU") return result.myAnyMenu;
@@ -53,8 +58,12 @@ export default function ResultPage() {
               return (
                 <li key={key} className={`result-item${mine ? " voted" : ""}`}>
                   <div className="result-row">
-                    {item.imageUrl && (
+                    {item.imageUrl ? (
                       <img className="menu-thumb" src={item.imageUrl} alt={item.menuName} />
+                    ) : (
+                      <div className="menu-thumb-placeholder" aria-hidden="true">
+                        {SPECIAL_ICON[item.specialOption] ?? "🍴"}
+                      </div>
                     )}
                     <div className="result-body">
                       <div className="result-label">
