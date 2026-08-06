@@ -195,6 +195,7 @@ input, button {
   display: block;
   width: 100%;
   padding: 10px 12px;
+  margin-bottom: 10px;
   border: 1px solid #ddd;
   border-radius: 8px;
   background: #fff;
@@ -203,6 +204,10 @@ input, button {
   text-decoration: none;
   font-size: 13px;
   box-sizing: border-box;
+}
+
+.secondary-button:last-child {
+  margin-bottom: 0;
 }
 
 .secondary-button:hover {
@@ -497,6 +502,45 @@ input, button {
 }
 
 .primary-button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.manual-register-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.manual-register-row input {
+  flex: 1;
+  min-width: 100px;
+  padding: 8px 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+.manual-register-row .dropdown {
+  flex: 1;
+  min-width: 120px;
+}
+
+.manual-register-row .dropdown-trigger {
+  width: 100%;
+}
+
+.manual-register-row button[type="submit"] {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  background: #ff8a3d;
+  color: #fff;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.manual-register-row button[type="submit"]:disabled {
   background: #ccc;
   cursor: not-allowed;
 }

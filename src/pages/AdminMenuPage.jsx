@@ -149,20 +149,21 @@ export default function AdminMenuPage() {
 
       <div className="admin-panel">
         <h2>수동 메뉴 등록</h2>
-        <form className="inline-form" onSubmit={handleCreate}>
+        <form className="manual-register-row" onSubmit={handleCreate}>
           <input
             placeholder="메뉴명"
             value={createForm.menuName}
             onChange={(e) => setCreateForm({ ...createForm, menuName: e.target.value })}
             required
           />
-          <input
-            placeholder="반 (예: 1반)"
+          <CodeDropdown
+            codes={codes}
             value={createForm.className}
-            onChange={(e) => setCreateForm({ ...createForm, className: e.target.value })}
-            required
+            onChange={(code) => setCreateForm({ ...createForm, className: code })}
           />
-          <button type="submit">등록</button>
+          <button type="submit" disabled={!createForm.menuName || !createForm.className}>
+            등록
+          </button>
         </form>
       </div>
 

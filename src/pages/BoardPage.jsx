@@ -18,6 +18,7 @@ export default function BoardPage() {
   const [loading, setLoading] = useState(true);
   const [voting, setVoting] = useState(false);
   const [error, setError] = useState("");
+  const [reselecting, setReselecting] = useState(false);
 
   const load = async () => {
     setLoading(true);
@@ -52,11 +53,18 @@ export default function BoardPage() {
     try {
       await voteApi.vote(code, selectedMenuId);
       setMyVoteMenuId(selectedMenuId);
+      setReselecting(false);
     } catch (err) {
       setError(err.response?.data?.msg || "투표에 실패했습니다.");
     } finally {
       setVoting(false);
     }
+  };
+
+  const handleReselect = () => {
+    setSelectedMenuId(myVoteMenuId);
+    setReselecting(true);
+    setError("");
   };
 
   return (
@@ -80,14 +88,14 @@ export default function BoardPage() {
 
       {!loading && !error && menus.length > 0 && (
         <>
-          {myVoteMenuId && (
+          {myVoteMenuId && !reselecting && (
             <p className="notice">이미 오늘 투표를 완료했습니다. 아래에서 결과를 확인하세요.</p>
           )}
 
           <ul className="menu-list">
             {menus.map((menu) => {
-              const isVoted = myVoteMenuId === menu.menuId;
-              const isSelectable = !myVoteMenuId && menu.status === "OPEN";
+              const isVoted = !reselecting && myVoteMenuId === menu.menuId;
+              const isSelectable = (!myVoteMenuId || reselecting) && menu.status === "OPEN";
               return (
                 <li
                   key={menu.menuId}
@@ -121,7 +129,7 @@ export default function BoardPage() {
             })}
           </ul>
 
-          {!myVoteMenuId && (
+          {(!myVoteMenuId || reselecting) && (
             <button
               type="button"
               className="vote-button"
@@ -129,6 +137,12 @@ export default function BoardPage() {
               onClick={handleVote}
             >
               {voting ? "투표하는 중..." : "투표하기"}
+            </button>
+          )}
+
+          {myVoteMenuId && !reselecting && (
+            <button type="button" className="secondary-button" onClick={handleReselect}>
+              다시 선택하기
             </button>
           )}
 
