@@ -1,0 +1,61 @@
+name: Deploy React App
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+        env:
+          VITE_API_BASE_URL: ""
+
+      - name: Prepare Target Directory
+        if: github.event_name == 'push'
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          key: ${{ secrets.SSH_KEY }}
+          username: ${{ secrets.USERNAME }}
+          script: |
+            rm -rf /home/ubuntu/oneulmwo-deploy/dist
+            mkdir -p /home/ubuntu/oneulmwo-deploy/dist
+
+      - name: Deploy React Project To EC2
+        if: github.event_name == 'push'
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          key: ${{ secrets.SSH_KEY }}
+          username: ${{ secrets.USERNAME }}
+          source: "dist/"
+          target: "/home/ubuntu/oneulmwo-deploy/"
+          overwrite: true
+
+      - name: Restart Container
+        if: github.event_name == 'push'
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          key: ${{ secrets.SSH_KEY }}
+          username: ${{ secrets.USERNAME }}
+          script: |
+            cd /home/ubuntu/oneulmwo-deploy
+            docker compose restart web
