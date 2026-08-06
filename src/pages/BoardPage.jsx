@@ -60,6 +60,24 @@ export default function BoardPage() {
     setSelectedMenuIds((prev) =>
       prev.includes(menuId) ? prev.filter((id) => id !== menuId) : [...prev, menuId]
     );
+    setSelectedAnyMenu(false);
+    setSelectedNoPreference(false);
+  };
+
+  const handleAnyMenuChange = (checked) => {
+    setSelectedAnyMenu(checked);
+    if (checked) {
+      setSelectedMenuIds([]);
+      setSelectedNoPreference(false);
+    }
+  };
+
+  const handleNoPreferenceChange = (checked) => {
+    setSelectedNoPreference(checked);
+    if (checked) {
+      setSelectedMenuIds([]);
+      setSelectedAnyMenu(false);
+    }
   };
 
   const handleVote = async () => {
@@ -165,7 +183,7 @@ export default function BoardPage() {
                   type="checkbox"
                   disabled={locked}
                   checked={selectedAnyMenu}
-                  onChange={(e) => setSelectedAnyMenu(e.target.checked)}
+                  onChange={(e) => handleAnyMenuChange(e.target.checked)}
                 />
                 <div>
                   <div className="menu-name">
@@ -185,7 +203,7 @@ export default function BoardPage() {
                   type="checkbox"
                   disabled={locked}
                   checked={selectedNoPreference}
-                  onChange={(e) => setSelectedNoPreference(e.target.checked)}
+                  onChange={(e) => handleNoPreferenceChange(e.target.checked)}
                 />
                 <div>
                   <div className="menu-name">
