@@ -23,6 +23,10 @@ export default function BoardPage() {
   const [voting, setVoting] = useState(false);
   const [error, setError] = useState("");
   const [reselecting, setReselecting] = useState(false);
+  const [newMenuName, setNewMenuName] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+  const [submitSuccess, setSubmitSuccess] = useState("");
 
   const hasVoted = myVoteMenuIds.length > 0 || myAnyMenu || myNoPreference;
   const hasSelection = selectedMenuIds.length > 0 || selectedAnyMenu || selectedNoPreference;
@@ -107,6 +111,25 @@ export default function BoardPage() {
     setSelectedNoPreference(myNoPreference);
     setReselecting(true);
     setError("");
+  };
+
+  const handleSubmitMenu = async (e) => {
+    e.preventDefault();
+    const menuName = newMenuName.trim();
+    if (!menuName) return;
+    setSubmitting(true);
+    setSubmitError("");
+    setSubmitSuccess("");
+    try {
+      await menuApi.submitMenu(code, menuName);
+      setNewMenuName("");
+      setSubmitSuccess("등록되었습니다. 관리자 검수 후 11시에 오픈됩니다.");
+      await load();
+    } catch (err) {
+      setSubmitError(err.response?.data?.msg || "메뉴 등록에 실패했습니다.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const locked = hasVoted && !reselecting;
@@ -242,6 +265,29 @@ export default function BoardPage() {
             전체 결과 보기
           </Link>
         </>
+      )}
+
+      {!loading && !error && (
+        <div className="menu-submit-section">
+          <h2 className="section-title">메뉴 추가하기</h2>
+          <p className="notice">
+            등록한 메뉴는 관리자 검수 후 오전 11시에 일괄 오픈돼요. 오전 11시 이후에는 오늘 메뉴를 등록할 수 없어요.
+          </p>
+          <form className="inline-form" onSubmit={handleSubmitMenu}>
+            <input
+              type="text"
+              placeholder="메뉴 이름 (예: 김치찌개)"
+              value={newMenuName}
+              onChange={(e) => setNewMenuName(e.target.value)}
+              disabled={submitting}
+            />
+            <button type="submit" disabled={submitting || !newMenuName.trim()}>
+              {submitting ? "등록하는 중..." : "메뉴 등록"}
+            </button>
+          </form>
+          {submitError && <p className="form-error">{submitError}</p>}
+          {submitSuccess && <p className="form-success">{submitSuccess}</p>}
+        </div>
       )}
     </div>
   );

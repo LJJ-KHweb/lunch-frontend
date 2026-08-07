@@ -606,6 +606,23 @@ input, button {
   cursor: not-allowed;
 }
 
+.menu-submit-section {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid #eee;
+}
+
+.section-title {
+  font-size: 15px;
+  margin: 0 0 8px;
+}
+
+.form-success {
+  color: #2a8a3e;
+  font-size: 13px;
+  margin: 8px 0 0;
+}
+
 .admin-card {
   display: flex;
   flex-wrap: wrap;

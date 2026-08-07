@@ -2,6 +2,8 @@ import axiosInstance from "./axiosInstance";
 
 export const getBoardMenus = (code) => axiosInstance.get("/api/menus/board", { params: { code } });
 
+export const submitMenu = (code, menuName) => axiosInstance.post("/api/menus", { code, menuName });
+
 export const getAdminMenus = (date) =>
   axiosInstance.get("/api/admin/menus", { params: date ? { date } : {} });
 
