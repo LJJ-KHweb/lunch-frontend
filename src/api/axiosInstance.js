@@ -1,15 +1,18 @@
 import axios from "axios";
+import { getVoterToken } from "./voterToken";
 
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
 });
 
-// 요청 인터셉터: accessToken이 있으면 Authorization 헤더에 자동으로 붙임
+// 요청 인터셉터: accessToken이 있으면 Authorization 헤더에, 투표자 토큰은 항상
+// X-Voter-Token 헤더에 자동으로 붙임 (기존 IP 기반 투표자 식별을 대체 - voterToken.js 참고)
 axiosInstance.interceptors.request.use((config) => {
   const accessToken = localStorage.getItem("accessToken");
   if (accessToken) {
     config.headers.Authorization = `Bearer ${accessToken}`;
   }
+  config.headers["X-Voter-Token"] = getVoterToken();
   return config;
 });
 
