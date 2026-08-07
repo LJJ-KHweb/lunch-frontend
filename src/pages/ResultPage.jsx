@@ -3,8 +3,8 @@ import { Link, useParams } from "react-router-dom";
 import * as voteApi from "../api/voteApi";
 
 const SPECIAL_ICON = {
-  ANY_MENU: "🍽️",
-  NO_PREFERENCE: "🙅",
+  ANY_MENU: "🤷",
+  NO_PREFERENCE: "🚫",
 };
 
 const isMyVote = (item, result) => {

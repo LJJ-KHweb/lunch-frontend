@@ -186,7 +186,7 @@ export default function BoardPage() {
                   onChange={(e) => handleAnyMenuChange(e.target.checked)}
                 />
                 <div className="menu-thumb-placeholder" aria-hidden="true">
-                  🍽️
+                  🤷
                 </div>
                 <div>
                   <div className="menu-name">
@@ -209,7 +209,7 @@ export default function BoardPage() {
                   onChange={(e) => handleNoPreferenceChange(e.target.checked)}
                 />
                 <div className="menu-thumb-placeholder" aria-hidden="true">
-                  🙅
+                  🚫
                 </div>
                 <div>
                   <div className="menu-name">
