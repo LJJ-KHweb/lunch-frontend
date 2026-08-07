@@ -112,7 +112,8 @@ input, button {
   margin: 4px 0 0;
 }
 
-.link-button {
+.link-button,
+.inline-form button.link-button {
   background: #fff;
   border: 1px solid #ddd;
   color: #666;
