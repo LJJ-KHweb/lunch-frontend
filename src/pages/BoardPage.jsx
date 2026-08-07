@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import * as menuApi from "../api/menuApi";
 import * as voteApi from "../api/voteApi";
+import anyMenuIcon from "../assets/any-menu.png";
+import noPreferenceIcon from "../assets/no-preference.png";
 
 const STATUS_LABEL = {
   PENDING_REVIEW: "검토중",
@@ -208,9 +210,7 @@ export default function BoardPage() {
                   checked={selectedAnyMenu}
                   onChange={(e) => handleAnyMenuChange(e.target.checked)}
                 />
-                <div className="menu-thumb-placeholder" aria-hidden="true">
-                  🤷
-                </div>
+                <img className="menu-thumb" src={anyMenuIcon} alt="" aria-hidden="true" />
                 <div>
                   <div className="menu-name">
                     무슨 메뉴든 좋다
@@ -231,9 +231,7 @@ export default function BoardPage() {
                   checked={selectedNoPreference}
                   onChange={(e) => handleNoPreferenceChange(e.target.checked)}
                 />
-                <div className="menu-thumb-placeholder" aria-hidden="true">
-                  🚫
-                </div>
+                <img className="menu-thumb" src={noPreferenceIcon} alt="" aria-hidden="true" />
                 <div>
                   <div className="menu-name">
                     원하는 메뉴가 없다
