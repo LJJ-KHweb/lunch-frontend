@@ -63,7 +63,7 @@ export default function ResultPage() {
                     {item.imageUrl ? (
                       <img className="menu-thumb" src={item.imageUrl} alt={item.menuName} />
                     ) : SPECIAL_ICON[item.specialOption] ? (
-                      <img className="menu-thumb" src={SPECIAL_ICON[item.specialOption]} alt="" aria-hidden="true" />
+                      <img className="menu-thumb-icon" src={SPECIAL_ICON[item.specialOption]} alt="" aria-hidden="true" />
                     ) : (
                       <div className="menu-thumb-placeholder" aria-hidden="true">
                         🍴

@@ -210,7 +210,7 @@ export default function BoardPage() {
                   checked={selectedAnyMenu}
                   onChange={(e) => handleAnyMenuChange(e.target.checked)}
                 />
-                <img className="menu-thumb" src={anyMenuIcon} alt="" aria-hidden="true" />
+                <img className="menu-thumb-icon" src={anyMenuIcon} alt="" aria-hidden="true" />
                 <div>
                   <div className="menu-name">
                     무슨 메뉴든 좋다
@@ -231,7 +231,7 @@ export default function BoardPage() {
                   checked={selectedNoPreference}
                   onChange={(e) => handleNoPreferenceChange(e.target.checked)}
                 />
-                <img className="menu-thumb" src={noPreferenceIcon} alt="" aria-hidden="true" />
+                <img className="menu-thumb-icon" src={noPreferenceIcon} alt="" aria-hidden="true" />
                 <div>
                   <div className="menu-name">
                     원하는 메뉴가 없다
