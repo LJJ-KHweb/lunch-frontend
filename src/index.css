@@ -113,13 +113,14 @@ input, button {
 }
 
 .link-button {
-  background: none;
-  border: none;
+  background: #fff;
+  border: 1px solid #ddd;
   color: #666;
   cursor: pointer;
-  font-size: 13px;
-  text-decoration: underline;
-  padding: 0;
+  font-size: inherit;
+  text-decoration: none;
+  padding: 8px 12px;
+  border-radius: 6px;
 }
 
 .empty {

@@ -25,9 +25,11 @@ export default function CodeEntryPage() {
 
   return (
     <div className="form-page">
-      <h1>오늘뭐</h1>
+      <h1>오늘뭐먹지?</h1>
       <p className="form-intro">
-        오늘의 점심 메뉴를 투표로 정하는 서비스예요. 관리자에게 받은 코드를 입력해주세요.
+        오늘의 점심 메뉴를 투표로 정하는 서비스예요.
+        <br />
+        관리자에게 받은 코드를 입력해주세요.
       </p>
       <form onSubmit={handleSubmit}>
         <input

@@ -32,6 +32,8 @@ export default function BoardPage() {
 
   const hasVoted = myVoteMenuIds.length > 0 || myAnyMenu || myNoPreference;
   const hasSelection = selectedMenuIds.length > 0 || selectedAnyMenu || selectedNoPreference;
+  // 검토중(PENDING_REVIEW) 메뉴는 아직 관리자 확정 전이라 학생 화면에서는 아예 숨김 (피드백 7, 15번)
+  const visibleMenus = menus.filter((menu) => menu.status !== "PENDING_REVIEW");
 
   const load = async () => {
     setLoading(true);
@@ -140,7 +142,7 @@ export default function BoardPage() {
     <div className="page">
       <div className="page-header">
         <div>
-          <h1>오늘뭐</h1>
+          <h1>오늘뭐먹지?</h1>
           <p className="sub">{code}</p>
         </div>
         <button type="button" className="nav-pill" onClick={() => navigate("/")}>
@@ -151,20 +153,22 @@ export default function BoardPage() {
       {loading && <p>불러오는 중...</p>}
       {!loading && error && <p className="form-error">{error}</p>}
 
-      {!loading && !error && menus.length === 0 && (
+      {!loading && !error && visibleMenus.length === 0 && (
         <p className="empty">오늘은 아직 등록된 메뉴가 없습니다.</p>
       )}
 
-      {!loading && !error && menus.length > 0 && (
+      {!loading && !error && visibleMenus.length > 0 && (
         <>
           {locked && (
             <p className="notice">
-              이미 오늘 투표를 완료했습니다. 여러 메뉴를 함께 선택했다면 모두 표시됩니다.
+              이미 오늘 투표를 완료했습니다.
+              <br />
+              여러 메뉴를 함께 선택했다면 모두 표시됩니다.
             </p>
           )}
 
           <ul className="menu-list">
-            {menus.map((menu) => {
+            {visibleMenus.map((menu) => {
               const isVoted = locked && myVoteMenuIds.includes(menu.menuId);
               const isSelectable = !locked && menu.status === "OPEN";
               return (
@@ -269,7 +273,9 @@ export default function BoardPage() {
         <div className="menu-submit-section">
           <h2 className="section-title">메뉴 추가하기</h2>
           <p className="notice">
-            등록한 메뉴는 관리자 검수 후 오전 11시에 일괄 오픈돼요. 오전 11시 이후에는 오늘 메뉴를 등록할 수 없어요.
+            등록한 메뉴는 관리자 검수 후 오전 11시에 일괄 오픈돼요.
+            <br />
+            오전 11시 이후에는 오늘 메뉴를 등록할 수 없어요.
           </p>
           <form className="inline-form" onSubmit={handleSubmitMenu}>
             <input

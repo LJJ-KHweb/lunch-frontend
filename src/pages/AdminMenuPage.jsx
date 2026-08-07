@@ -212,11 +212,9 @@ export default function AdminMenuPage() {
                       마감
                     </button>
                   )}
-                  {menu.status !== "CLOSED" && (
-                    <button type="button" onClick={() => startEdit(menu)}>
-                      수정
-                    </button>
-                  )}
+                  <button type="button" onClick={() => startEdit(menu)}>
+                    수정
+                  </button>
                   <button type="button" className="danger" onClick={() => handleDelete(menu.menuId)}>
                     삭제
                   </button>
