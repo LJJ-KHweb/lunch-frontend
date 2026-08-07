@@ -7,6 +7,7 @@ export default function AdminCodesPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [newCode, setNewCode] = useState("");
+  const [newAddress, setNewAddress] = useState("");
   const [creating, setCreating] = useState(false);
 
   const load = async () => {
@@ -32,8 +33,9 @@ export default function AdminCodesPage() {
     setCreating(true);
     setError("");
     try {
-      await classCodeApi.createCode(newCode);
+      await classCodeApi.createCode(newCode, newAddress);
       setNewCode("");
+      setNewAddress("");
       load();
     } catch (err) {
       setError(err.response?.data?.msg || "코드 생성에 실패했습니다.");
@@ -67,10 +69,18 @@ export default function AdminCodesPage() {
             value={newCode}
             onChange={(e) => setNewCode(e.target.value)}
           />
+          <input
+            placeholder="주소 (선택, 예: 서울시 강남구 테헤란로 123)"
+            value={newAddress}
+            onChange={(e) => setNewAddress(e.target.value)}
+          />
           <button type="submit" disabled={!newCode || creating}>
             {creating ? "생성 중..." : "발급"}
           </button>
         </form>
+        <p className="form-hint">
+          주소를 입력하면 AI가 오전 9시에 메뉴를 만들 때 주변 실제 음식점을 참고해요. 선택 입력이며, 나중에도 추가할 수 없으니 필요하면 지금 입력해주세요.
+        </p>
       </div>
 
       {loading && <p>불러오는 중...</p>}
@@ -81,7 +91,10 @@ export default function AdminCodesPage() {
           <li key={c.id} className="menu-card admin-card">
             <div>
               <div className="menu-name">{c.code}</div>
-              <div className="menu-sub">{c.createdAt?.slice(0, 10)} 발급</div>
+              <div className="menu-sub">
+                {c.createdAt?.slice(0, 10)} 발급
+                {c.address && ` · ${c.address}${c.locationResolved ? "" : " (위치 확인 실패)"}`}
+              </div>
             </div>
             <div className="admin-actions">
               <button type="button" className="danger" onClick={() => handleDelete(c.id)}>
