@@ -1,5 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import CodeEntryPage from "./pages/CodeEntryPage";
+import NotFoundPage from "./pages/NotFoundPage";
 import BoardPage from "./pages/BoardPage";
 import ResultPage from "./pages/ResultPage";
 import LoginPage from "./pages/LoginPage";
@@ -33,6 +34,8 @@ export default function App() {
           </AdminRoute>
         }
       />
+
+      <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
 }
